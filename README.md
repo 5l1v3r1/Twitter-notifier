@@ -1,6 +1,7 @@
 Twitter-notifier
 ================
 
+
 Features
 ---------
 * Commandline base.
@@ -12,7 +13,7 @@ Features
 
 
 How to use?
---------------
+------------
 Open Twitter-notifier script, then add your twitter APIs
 
   CONSUMER_KEY        = "PUT YOUR CONSUMER KEY HERE"
@@ -22,9 +23,8 @@ Open Twitter-notifier script, then add your twitter APIs
 
 
 Then run the script
-  chmod +x twitter-notifier.rb && ruby twitter-notified.rb &
 
-
+ chmod +x twitter-notifier.rb && ruby twitter-notified.rb &
 
 
 
