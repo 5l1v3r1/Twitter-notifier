@@ -27,20 +27,18 @@ OAUTH_TOKEN         = "PUT YOUR TOKEN HERE"
 OAUTH_TOKEN_SECRET  = "PUT YOUR TOKEN SECRET HERE"
 ```
 
+You can edit the other settings 
+```ruby
+NOTIFY_ME_EACH      = 180   # Second. 180 second is the Minimum otherwise twitter will block you ;)
+NUM_OF_MENTIONS     = 10
+NUM_OF_DIRECT_MSGS  = 5
+```
+
 Then run the script
 ```bash
 chmod +x twitter-notifier.rb && ruby twitter-notified.rb &
 ```
 =======
-    CONSUMER_KEY        = "PUT YOUR CONSUMER KEY HERE"
-    CONSUMER_SECRET     = "PUT YOUR CONSUMER SECRET HERE"
-    OAUTH_TOKEN         = "PUT YOUR TOKEN HERE"
-    OAUTH_TOKEN_SECRET  = "PUT YOUR TOKEN SECRET HERE"
-
-You can edit the other settings 
-    NOTIFY_ME_EACH      = 180   # Second. 180 second is the Minimum otherwise twitter will block you ;)
-    NUM_OF_MENTIONS     = 10
-    NUM_OF_DIRECT_MSGS  = 5
 
 
 
