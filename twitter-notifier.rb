@@ -17,10 +17,10 @@ require 'rufus/scheduler'
 #
 # User Settings - Change the following values only with yours
 #
-CONSUMER_KEY        = ""
-CONSUMER_SECRET     = ""
-OAUTH_TOKEN         = ""
-OAUTH_TOKEN_SECRET  = ""
+CONSUMER_KEY        = "PUT YOUR CONSUMER KEY HERE"
+CONSUMER_SECRET     = "PUT YOUR CONSUMER SECRET HERE"
+OAUTH_TOKEN         = "PUT YOUR TOKEN HERE"
+OAUTH_TOKEN_SECRET  = "PUT YOUR TOKEN SECRET HERE"
 NOTIFY_ME_EACH      = 180   # Second
 NUM_OF_MENTIONS     = 10
 NUM_OF_DIRECT_MSGS  = 5
@@ -107,7 +107,7 @@ class Notifier
         image = get_avatar(info[:account] , info[:img])
         Libnotify.show(
                 :summary => "[ Mention ]\n @#{info[:account]} - #{info[:name]}",
-                :body => info[:text], :icon_path => image, :timeout => 10
+                :body => info[:text], :icon_path => image, :timeout => 5
         )
     end
 
@@ -140,135 +140,71 @@ end
 
 
 
-=begin
-check last 10 mentions
-check last 5 DM
-check last 5 followers
+getinfo  = GetInfo.new(OAUTH_TOKEN , OAUTH_TOKEN_SECRET)
+notifier =  Notifier.new
 
-save last 10 mentions_ids in queue
-check last new 10 followers
-if any one of last new mentions ids exist in the queue then delete it
-clear the queue , then add the last new mentions in the queue
-send notification
-=end
-getinfo = GetInfo.new(OAUTH_TOKEN , OAUTH_TOKEN_SECRET)
-notify =  Notifier.new
-getinfo.direct_messages(NUM_OF_DIRECT_MSGS)
-
-while true
-
-    last_mentions = getinfo.mentions(NUM_OF_MENTIONS)
-    mention_ids   = last_mentions.map do |mention|
-        mention[:id]
-    end
-
-
-    # repeated mentions_queue
-    mentions_queue = mentions_queue & mention_ids1
-
-    # Unique mentions
-    mentions_queue.map do |repeated|
-        mention_ids1.delete(repeated)
-    end
-
-    new_mentions.each do |mention|
-        next if mentions_queue.include?mention[:id]
-        p mention[:id]
-        p mention
-    end
-
-
-    sleep TWITTER_CHECK_PERIOD
-end
-
-
-
-#getinfo = GetInfo.new(OAUTH_TOKEN , OAUTH_TOKEN_SECRET)
-#p getinfo.mentions(10)
-#puts
-#p getinfo.direct_messages(5)
-
-
-# [{:id=>350364868580347907, :name=>"♛KING SABRI", :account=>"KINGSABRI", :img=>"https://si0.twimg.com/profile_images/3286433187/399d60de067aa00d54324a7943a3c1aa_normal.jpeg", :text=>"@KINGSABRI test 1\nلا تدقق جالس أسوي سكريبت :)"}, {:id=>350346231127605248, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI لااله الا الله حق ... اللهم صل وسلم على حبيبنا محمد .... :D"}, {:id=>350345670433050624, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI اجل اذا رحت البيت انا بشيك وعطيك خبر .. عشرين شغله بيدك اخطبوط انت .. ركز بشغلك يامكينه"}, {:id=>350344773728612354, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI ليش الغلط الحين :D كيف مالقيت شي اشتريت والا باقي"}, {:id=>350344207019417600, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI مو كان احد نسي احد .. والا كيف يا اجنبي"}, {:id=>350297343997915136, :name=>"م/ فهد الباز", :account=>"fahadalbaz", :img=>"https://si0.twimg.com/profile_images/1796099316/FAHAD_ALBAZ_normal.gif", :text=>"@KINGSABRI هههههههه. اشغل بالبايثون ولا تشوف الطل"}, {:id=>350263258952904704, :name=>"أنس أحمد", :account=>"AnassAhmed", :img=>"https://si0.twimg.com/profile_images/3659902971/cdcdeabce194eeb3e045c70126bec02c_normal.jpeg", :text=>"@KINGSABRI LOL :D\nالجميلة واخدة حقها وزيادة ومش محتاجة ^_^"}, {:id=>350259366827536384, :name=>"ام يوسف ", :account=>"nohaelfayoumy", :img=>"https://si0.twimg.com/profile_images/344513261576878452/0b0cbac51fbec2f7934b3745a07d6d8b_normal.jpeg", :text=>"@KINGSABRI @ChaimaaElbassel مافيش حاجه بتنقرض فى البلد دى"}, {:id=>350259245515677696, :name=>"ام يوسف ", :account=>"nohaelfayoumy", :img=>"https://si0.twimg.com/profile_images/344513261576878452/0b0cbac51fbec2f7934b3745a07d6d8b_normal.jpeg", :text=>"@ChaimaaElbassel @KINGSABRI يعيشى ليه :))"}, {:id=>350258954426793984, :name=>" شِيَمُ ʚϊɞ", :account=>"ChaimaaElbassel", :img=>"https://si0.twimg.com/profile_images/3785004749/cae86d9e89ca5ec694b5c28ea112d143_normal.jpeg", :text=>"@nohaelfayoumy @KINGSABRI انا اجيبلك المصدر بنفسه يقولك يا نًها مش دى ام بس:))"}]
-# [{:id=>349929418334019584, :name=>"Mohannad Alqouba", :account=>"MohannadAlqouba", :img=>"https://si0.twimg.com/profile_images/3308639864/51dc8221e18fa799610d3d61aa3423a1_normal.jpeg", :text=>"ان شاء الله بإذن الله :-)"}, {:id=>349874097066504192, :name=>"Mohannad Alqouba", :account=>"MohannadAlqouba", :img=>"https://si0.twimg.com/profile_images/3308639864/51dc8221e18fa799610d3d61aa3423a1_normal.jpeg", :text=>"السلام عليكم ورحمة الله وبركاته اكتشف بالمصادفه انني اقابلك كل يوم تقريباً فعلاً انت ذو خلق في الحياه الافتراضية و الواقعية وكما يذكرونه عنك"}, {:id=>342083654438248448, :name=>"Abdul Almohammadi", :account=>"AbdulAlmo", :img=>"https://si0.twimg.com/profile_images/3310838425/d384ac8bef2c347fdd1c7ca5d9095b17_normal.png", :text=>"سلام عليكم ..انا حاسس انوا في حكايه بس مش قادر اركز التركيز تعبان عندي بعد الغووص ."}, {:id=>331974080414773253, :name=>" عربي حرّ", :account=>"b_free2", :img=>"https://si0.twimg.com/profile_images/3548576582/5adb36035a3c29a2c61307e511d25f9f_normal.jpeg", :text=>"الحمد لله تمت الولادة على خير. ورزقنا الله بابنة. ام حامد والمولودة بخير والحمد لله \n\nتسلم يا طيب ودعواتك"}, {:id=>331895660683096066, :name=>" عربي حرّ", :account=>"b_free2", :img=>"https://si0.twimg.com/profile_images/3548576582/5adb36035a3c29a2c61307e511d25f9f_normal.jpeg", :text=>"الله يخليك يا اصيل مشتاق لك والله ومقصر وسامحني امانة على التقصير. إنت من القلة الي بقول الحمد لله ان تعرفت عليه. أخ كريم وأصيل\n"}]
-
-#puts
-#notify =  Notifier.new
-#notify.notify(getinfo.mentions(1)[0])
-#notify.notify(mentions[0])
-
-
-
-
-last_10_mentions = [{:id=>350364868580347907, :name=>"♛KING SABRI", :account=>"KINGSABRI", :img=>"https://si0.twimg.com/profile_images/3286433187/399d60de067aa00d54324a7943a3c1aa_normal.jpeg", :text=>"@KINGSABRI test 1\nلا تدقق جالس أسوي سكريبت :)"}, {:id=>350346231127605248, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI لااله الا الله حق ... اللهم صل وسلم على حبيبنا محمد .... :D"}, {:id=>350345670433050624, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI اجل اذا رحت البيت انا بشيك وعطيك خبر .. عشرين شغله بيدك اخطبوط انت .. ركز بشغلك يامكينه"}, {:id=>350344773728612354, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI ليش الغلط الحين :D كيف مالقيت شي اشتريت والا باقي"}, {:id=>350344207019417600, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI مو كان احد نسي احد .. والا كيف يا اجنبي"}, {:id=>350297343997915136, :name=>"م/ فهد الباز", :account=>"fahadalbaz", :img=>"https://si0.twimg.com/profile_images/1796099316/FAHAD_ALBAZ_normal.gif", :text=>"@KINGSABRI هههههههه. اشغل بالبايثون ولا تشوف الطل"}, {:id=>350263258952904704, :name=>"أنس أحمد", :account=>"AnassAhmed", :img=>"https://si0.twimg.com/profile_images/3659902971/cdcdeabce194eeb3e045c70126bec02c_normal.jpeg", :text=>"@KINGSABRI LOL :D\nالجميلة واخدة حقها وزيادة ومش محتاجة ^_^"}, {:id=>350259366827536384, :name=>"ام يوسف ", :account=>"nohaelfayoumy", :img=>"https://si0.twimg.com/profile_images/344513261576878452/0b0cbac51fbec2f7934b3745a07d6d8b_normal.jpeg", :text=>"@KINGSABRI @ChaimaaElbassel مافيش حاجه بتنقرض فى البلد دى"}, {:id=>350259245515677696, :name=>"ام يوسف ", :account=>"nohaelfayoumy", :img=>"https://si0.twimg.com/profile_images/344513261576878452/0b0cbac51fbec2f7934b3745a07d6d8b_normal.jpeg", :text=>"@ChaimaaElbassel @KINGSABRI يعيشى ليه :))"}, {:id=>350258954426793984, :name=>" شِيَمُ ʚϊɞ", :account=>"ChaimaaElbassel", :img=>"https://si0.twimg.com/profile_images/3785004749/cae86d9e89ca5ec694b5c28ea112d143_normal.jpeg", :text=>"@nohaelfayoumy @KINGSABRI انا اجيبلك المصدر بنفسه يقولك يا نًها مش دى ام بس:))"}]
-new_last_10_mentions = [{:id=>350364868580347907, :name=>"♛KING SABRI", :account=>"KINGSABRI", :img=>"https://si0.twimg.com/profile_images/3286433187/399d60de067aa00d54324a7943a3c1aa_normal.jpeg", :text=>"@KINGSABRI test 1\nلا تدقق جالس أسوي سكريبت :)"}, {:id=>350346231127605248, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI لااله الا الله حق ... اللهم صل وسلم على حبيبنا محمد .... :D"}, {:id=>350345670433050624, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI اجل اذا رحت البيت انا بشيك وعطيك خبر .. عشرين شغله بيدك اخطبوط انت .. ركز بشغلك يامكينه"}, {:id=>350344773728612354, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI ليش الغلط الحين :D كيف مالقيت شي اشتريت والا باقي"}, {:id=>350344207019417600, :name=>"Mohammed AL Jeaid", :account=>"Linux4SA", :img=>"https://si0.twimg.com/profile_images/2436743720/Screenshot-15_2_normal.png", :text=>"@KINGSABRI مو كان احد نسي احد .. والا كيف يا اجنبي"}, {:id=>350297343997915136, :name=>"م/ فهد الباز", :account=>"fahadalbaz", :img=>"https://si0.twimg.com/profile_images/1796099316/FAHAD_ALBAZ_normal.gif", :text=>"@KINGSABRI هههههههه. اشغل بالبايثون ولا تشوف الطل"}, {:id=>350263258952904704, :name=>"أنس أحمد", :account=>"AnassAhmed", :img=>"https://si0.twimg.com/profile_images/3659902971/cdcdeabce194eeb3e045c70126bec02c_normal.jpeg", :text=>"@KINGSABRI LOL :D\nالجميلة واخدة حقها وزيادة ومش محتاجة ^_^"}, {:id=>350259366827536111, :name=>"ام يوسف ", :account=>"nohaelfayoumy", :img=>"https://si0.twimg.com/profile_images/344513261576878452/0b0cbac51fbec2f7934b3745a07d6d8b_normal.jpeg", :text=>"@KINGSABRI @ChaimaaElbassel مافيش حاجه بتنقرض فى البلد دى"}, {:id=>350259245515677333, :name=>"ام يوسف ", :account=>"nohaelfayoumy", :img=>"https://si0.twimg.com/profile_images/344513261576878452/0b0cbac51fbec2f7934b3745a07d6d8b_normal.jpeg", :text=>"@ChaimaaElbassel @KINGSABRI يعيشى ليه :))"}, {:id=>350258954426793444, :name=>" شِيَمُ ʚϊɞ", :account=>"ChaimaaElbassel", :img=>"https://si0.twimg.com/profile_images/3785004749/cae86d9e89ca5ec694b5c28ea112d143_normal.jpeg", :text=>"@nohaelfayoumy @KINGSABRI انا اجيبلك المصدر بنفسه يقولك يا نًها مش دى ام بس:))"}]
-
-mention_ids = last_10_mentions.map do |mention|
-    mention[:id]
-end
-
-puts "Old mentions"
-p mention_ids
-puts
-mentions_queue = mention_ids
-mention_ids1 = new_last_10_mentions.map do |mention|
-    mention[:id]
-end
-
-puts "\n\nNew mentions"
-p mention_ids1
-
-mentions_queue = mentions_queue & mention_ids1
-
-puts "\n\nrepeated mentions_queue"
-p mentions_queue
-
-puts "\n\nNotify Unique mentions"
-mentions_queue.map do |repeated|
-    mention_ids1.delete(repeated)
-end
-p mention_ids1
-
-puts "\n\n\n"
-new_last_10_mentions.each do |mention|
-    next if mentions_queue.include?mention[:id]
-    p mention[:id]
-    p mention
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#scheduler = Rufus::Scheduler.start_new
-#scheduler.every '2s' do
-#    puts "order ristretto"
-#end
 #
-#scheduler.join
+# Showtime ;)
+#
+begin
+
+    mentions_queue = []
+
+    while true
+
+        #
+        # Mentions notification
+        #
+        last_mentions = getinfo.mentions(NUM_OF_MENTIONS)
+
+        if mentions_queue.empty?
+            mentions_queue = last_mentions
+        else
+            # Repeated mentions
+            mentions_queue = last_mentions & mentions_queue
+
+            # Delete repeated mentions
+            # FIXME , BY THIS WAY IT WILL REPEAT THE REPEATED TWEETES EVERY 6 MINUTES , GENIUS
+            mentions_queue.each do |repeated|
+                last_mentions.delete(repeated)
+            end
+        end
+
+        last_mentions.each do |mention|
+            notifier.notify(mention)
+            sleep 0.80
+        end
+        mentions_queue = last_mentions
+
+        ##
+        ## Direct messages notification
+        ##
+        #last_dms = getinfo.direct_messages(NUM_OF_DIRECT_MSGS)
+        #
+        #if mentions_queue.empty?
+        #    dir_msgs_queue = last_dms
+        #else
+        #    # Repeated mentions
+        #    dir_msgs_queue = last_dms & dir_msgs_queue
+        #
+        #    # Delete repeated mentions
+        #    dir_msgs_queue.each do |repeated|
+        #        last_dms.delete(repeated)
+        #    end
+        #end
+        #
+        #last_dms.each do |mention|
+        #    notifier.notify(mention)
+        #    sleep 0.80
+        #end
+        #mentions_queue = last_dms
 
 
+        sleep TWITTER_CHECK_PERIOD
+    end
 
-
-
-
-
-
+rescue Exception => e
+    puts  e
+end
 
 
