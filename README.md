@@ -42,13 +42,6 @@ chmod +x twitter-notifier.rb && ruby twitter-notified.rb &
 
 
 
-
-Then run the script
-
-    chmod +x twitter-notifier.rb && ruby twitter-notified.rb &
-
-
-
 **Required gems**
 
     gem install twitter libnotify
