@@ -7,7 +7,6 @@
 require 'twitter'
 require 'libnotify'
 require 'net/http'
-require 'rufus/scheduler'
 
 #
 # TODO : use daemons to run the script as daemon http://daemons.rubyforge.org/
