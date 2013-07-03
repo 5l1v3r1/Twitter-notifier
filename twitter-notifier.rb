@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 #
-# gem install twitter libnotify rufus-scheduler
+# gem install twitter libnotify
 #
 
 require 'twitter'
@@ -20,11 +20,11 @@ CONSUMER_KEY        = "PUT YOUR CONSUMER KEY HERE"
 CONSUMER_SECRET     = "PUT YOUR CONSUMER SECRET HERE"
 OAUTH_TOKEN         = "PUT YOUR TOKEN HERE"
 OAUTH_TOKEN_SECRET  = "PUT YOUR TOKEN SECRET HERE"
-NOTIFY_ME_EACH      = 180   # Second
+NOTIFY_ME_EACH      = 80   # Second.
 NUM_OF_MENTIONS     = 10
 NUM_OF_DIRECT_MSGS  = 5
 NUM_OF_FOLLOWERS    = 5
-TWITTER_CHECK_PERIOD= 180   # 180 second is the Minimum otherwise twitter will block you ;)
+
 
 
 
@@ -40,8 +40,8 @@ class GetInfo
         # Application settings
         #
         Twitter.configure do |config|
-            config.consumer_key       = @consumer_key
-            config.consumer_secret    = @consumer_secret
+            config.consumer_key    = @consumer_key
+            config.consumer_secret = @consumer_secret
         end
         #
         # Oauth of user - should not be shared!
@@ -56,7 +56,6 @@ class GetInfo
     # Find last @number of mentions
     #
     def mentions(num)
-        # puts the last 10 mentions in queue and check the next if any of theme is exist , delete it from the queue
         last_mentions = @client.mentions_timeline.first(num).map do |data|
                 {:id => data[:id] , :name => data[:user][:name], :account => data[:user][:screen_name],
                  :img => data[:profile_image_url_https], :text => data[:text]}
@@ -102,10 +101,10 @@ class Notifier
         Dir.mkdir("cache") if !Dir.exist?("cache")
     end
 
-    def notify(info)
+    def notify(info , title)
         image = get_avatar(info[:account] , info[:img])
         Libnotify.show(
-                :summary => "[ Mention ]\n @#{info[:account]} - #{info[:name]}",
+                :summary => "[ #{title} ]\n @#{info[:account]} - #{info[:name]}",
                 :body => info[:text], :icon_path => image, :timeout => 5
         )
     end
@@ -147,63 +146,49 @@ notifier =  Notifier.new
 #
 begin
 
-    mentions_queue = []
+    mentions_queue  = []
+    unique_mentions = []
+    dirmsg_queue    = []
+    unique_dirmsg   = []
 
     while true
 
         #
-        # Mentions notification
+        # Mentions
         #
         last_mentions = getinfo.mentions(NUM_OF_MENTIONS)
 
         if mentions_queue.empty?
-            mentions_queue = last_mentions
+            mentions_queue  = last_mentions
+            unique_mentions = last_mentions
         else
-            # Repeated mentions
-            mentions_queue = last_mentions & mentions_queue
-
-            # Delete repeated mentions
-            # FIXME , BY THIS WAY IT WILL REPEAT THE REPEATED TWEETES EVERY 6 MINUTES , GENIUS
-            mentions_queue.each do |repeated|
-                last_mentions.delete(repeated)
-            end
+            # Unique mentions
+            unique_mentions = last_mentions - mentions_queue
+            mentions_queue  = last_mentions
         end
 
-        last_mentions.each do |mention|
-            notifier.notify(mention)
+        #
+        # Direct messages
+        #
+        last_dirmsgs = getinfo.direct_messages(NUM_OF_DIRECT_MSGS)
+        if dirmsg_queue.empty?
+            dirmsg_queue  = last_dirmsgs
+            unique_dirmsg = last_dirmsgs
+        else
+            # Unique mentions
+            unique_dirmsg = last_dirmsgs - dirmsg_queue
+            dirmsg_queue  = last_dirmsgs
+        end
+
+        unique_dirmsg.each do |dm|
+            notifier.notify(dm, "Direct Message")
             sleep 0.80
         end
-        mentions_queue = last_mentions
 
-        ##
-        ## Direct messages notification
-        ##
-        #last_dms = getinfo.direct_messages(NUM_OF_DIRECT_MSGS)
-        #
-        #if mentions_queue.empty?
-        #    dir_msgs_queue = last_dms
-        #else
-        #    # Repeated mentions
-        #    dir_msgs_queue = last_dms & dir_msgs_queue
-        #
-        #    # Delete repeated mentions
-        #    dir_msgs_queue.each do |repeated|
-        #        last_dms.delete(repeated)
-        #    end
-        #end
-        #
-        #last_dms.each do |mention|
-        #    notifier.notify(mention)
-        #    sleep 0.80
-        #end
-        #mentions_queue = last_dms
-
-
-        sleep TWITTER_CHECK_PERIOD
+        sleep NOTIFY_ME_EACH
     end
 
 rescue Exception => e
     puts  e
 end
-
 
