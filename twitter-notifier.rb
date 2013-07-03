@@ -180,6 +180,13 @@ begin
             dirmsg_queue  = last_dirmsgs
         end
 
+        #
+        # Notifications
+        #
+        unique_mentions.each do |mention|
+            notifier.notify(mention, "Mentions")
+            sleep 0.80
+        end
         unique_dirmsg.each do |dm|
             notifier.notify(dm, "Direct Message")
             sleep 0.80
