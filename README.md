@@ -47,6 +47,10 @@ chmod +x twitter-notifier.rb && ruby twitter-notified.rb &
     gem install twitter libnotify
 
 
+**TODO**
+* Support new followers
+* Run as daemon
+
 
 **Suggestions?!**
 
