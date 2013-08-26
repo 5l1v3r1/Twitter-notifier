@@ -52,6 +52,23 @@ chmod +x twitter-notifier.rb && ruby twitter-notified.rb &
 * Run as daemon
 
 
+## Configuration
+Twitter API v1.1 requires you to authenticate via OAuth, so you'll need to
+[register your application with Twitter][register]. Once you've registered an
+application, make sure to set the correct access level, otherwise you may see
+the error:
+
+    Read-only application cannot POST
+
+Your new application will be assigned a consumer key/secret pair and you will
+be assigned an OAuth access token/secret pair for that application. You'll need
+to configure these values before you make a request or else you'll get the
+error:
+
+    Bad Authentication data
+
+
+
 **Suggestions?!**
 
 please send request or send a mention in twitter @KINGSABRI
